@@ -1,5 +1,5 @@
-import React from 'react';
-import { Brain, MessageCircle, Target, AlertTriangle, CheckCircle } from 'lucide-react';
+import React, { useState } from 'react';
+import { Brain, MessageCircle, Target, AlertTriangle, CheckCircle, Lightbulb, ArrowRight } from 'lucide-react';
 
 interface DeepInsightsProps {
   data: {
@@ -13,104 +13,180 @@ interface DeepInsightsProps {
 }
 
 export const DeepInsights: React.FC<DeepInsightsProps> = ({ data }) => {
+  const [activeTab, setActiveTab] = useState('overview');
+
+  const tabs = [
+    { id: 'overview', label: 'Overview', icon: Brain },
+    { id: 'communication', label: 'Communication', icon: MessageCircle },
+    { id: 'strategy', label: 'Strategy', icon: Target },
+  ];
+
   return (
-    <div className="bg-white/5 backdrop-blur-xl rounded-3xl p-8 border border-white/10 lg:col-span-2">
-      <div className="flex items-center gap-3 mb-6">
-        <Brain className="w-6 h-6 text-purple-400" />
+    <div className="glass-card rounded-3xl p-8 hover:scale-105 transition-all duration-300 lg:col-span-2">
+      <div className="flex items-center gap-3 mb-8">
+        <div className="p-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg">
+          <Brain className="w-6 h-6 text-white" />
+        </div>
         <h2 className="text-2xl font-bold text-white">Deep Communication Insights</h2>
+        <div className="ml-auto flex items-center gap-2 glass-card px-3 py-1 rounded-full">
+          <Lightbulb className="w-4 h-4 text-yellow-400 animate-pulse" />
+          <span className="text-yellow-400 text-sm font-medium">AI Generated</span>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {/* Left Column */}
-        <div className="space-y-6">
-          {/* Key Topics */}
-          <div>
-            <div className="flex items-center gap-2 mb-3">
-              <MessageCircle className="w-4 h-4 text-blue-400" />
-              <h3 className="text-lg font-semibold text-white">Key Topics</h3>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {data.keyTopics.map((topic, index) => (
-                <span 
-                  key={index}
-                  className="bg-blue-500/20 text-blue-300 px-3 py-1 rounded-full text-sm border border-blue-500/30"
-                >
-                  {topic}
-                </span>
-              ))}
-            </div>
-          </div>
+      {/* Enhanced Tab Navigation */}
+      <div className="flex gap-2 mb-8">
+        {tabs.map((tab) => {
+          const Icon = tab.icon;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
+                activeTab === tab.id
+                  ? 'bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-white border border-purple-500/30'
+                  : 'text-gray-400 hover:text-white hover:bg-white/10'
+              }`}
+            >
+              <Icon className="w-4 h-4" />
+              {tab.label}
+            </button>
+          );
+        })}
+      </div>
 
-          {/* Communication Style */}
-          <div>
-            <div className="flex items-center gap-2 mb-3">
-              <Target className="w-4 h-4 text-green-400" />
-              <h3 className="text-lg font-semibold text-white">Communication Style</h3>
+      {/* Tab Content */}
+      <div className="animate-float-up">
+        {activeTab === 'overview' && (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Key Topics */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-2 mb-4">
+                <MessageCircle className="w-5 h-5 text-blue-400" />
+                <h3 className="text-lg font-semibold text-white">Key Discussion Topics</h3>
+              </div>
+              <div className="space-y-3">
+                {data.keyTopics.map((topic, index) => (
+                  <div 
+                    key={index}
+                    className="flex items-center gap-3 p-4 glass-card rounded-xl hover:bg-white/10 transition-all duration-300 group"
+                  >
+                    <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center text-white font-bold text-sm">
+                      {index + 1}
+                    </div>
+                    <span className="text-gray-300 group-hover:text-white transition-colors">{topic}</span>
+                  </div>
+                ))}
+              </div>
             </div>
-            <p className="text-gray-300 bg-white/5 rounded-lg p-3 border border-white/10">
-              {data.communicationStyle}
-            </p>
-          </div>
 
-          {/* Decision Cues */}
-          <div>
-            <div className="flex items-center gap-2 mb-3">
-              <CheckCircle className="w-4 h-4 text-green-400" />
-              <h3 className="text-lg font-semibold text-white">Decision Cues</h3>
+            {/* AI Summary */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-2 mb-4">
+                <Brain className="w-5 h-5 text-purple-400" />
+                <h3 className="text-lg font-semibold text-white">AI Analysis Summary</h3>
+              </div>
+              <div className="glass-card rounded-xl p-6 border border-purple-500/20 bg-gradient-to-br from-purple-500/5 to-pink-500/5">
+                <p className="text-gray-300 leading-relaxed text-lg">
+                  {data.summary}
+                </p>
+                <div className="mt-4 flex items-center gap-2 text-sm text-purple-400">
+                  <Lightbulb className="w-4 h-4" />
+                  <span>Generated by advanced AI analysis</span>
+                </div>
+              </div>
             </div>
-            <ul className="space-y-2">
-              {data.decisionCues.map((cue, index) => (
-                <li key={index} className="flex items-center gap-2 text-gray-300">
-                  <div className="w-1.5 h-1.5 bg-green-400 rounded-full" />
-                  {cue}
-                </li>
-              ))}
-            </ul>
           </div>
+        )}
+
+        {activeTab === 'communication' && (
+          <div className="space-y-8">
+            {/* Communication Style */}
+            <div>
+              <div className="flex items-center gap-2 mb-4">
+                <Target className="w-5 h-5 text-green-400" />
+                <h3 className="text-lg font-semibold text-white">Communication Style Analysis</h3>
+              </div>
+              <div className="glass-card rounded-xl p-6 border border-green-500/20 bg-gradient-to-br from-green-500/5 to-emerald-500/5">
+                <p className="text-gray-300 leading-relaxed text-lg mb-4">
+                  {data.communicationStyle}
+                </p>
+                <div className="flex items-center gap-2 text-sm text-green-400">
+                  <CheckCircle className="w-4 h-4" />
+                  <span>Behavioral pattern identified</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Decision Cues */}
+            <div>
+              <div className="flex items-center gap-2 mb-4">
+                <CheckCircle className="w-5 h-5 text-green-400" />
+                <h3 className="text-lg font-semibold text-white">Decision-Making Cues</h3>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {data.decisionCues.map((cue, index) => (
+                  <div key={index} className="flex items-center gap-3 p-4 glass-card rounded-xl hover:bg-white/10 transition-all duration-300 group">
+                    <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+                    <span className="text-gray-300 group-hover:text-white transition-colors">{cue}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'strategy' && (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Potential Objections */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-2 mb-4">
+                <AlertTriangle className="w-5 h-5 text-yellow-400" />
+                <h3 className="text-lg font-semibold text-white">Potential Objections</h3>
+              </div>
+              <div className="space-y-3">
+                {data.objections.map((objection, index) => (
+                  <div key={index} className="flex items-start gap-3 p-4 glass-card rounded-xl hover:bg-white/10 transition-all duration-300 group">
+                    <AlertTriangle className="w-5 h-5 text-yellow-400 mt-0.5 flex-shrink-0" />
+                    <span className="text-gray-300 group-hover:text-white transition-colors">{objection}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Next Steps */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-2 mb-4">
+                <Target className="w-5 h-5 text-blue-400" />
+                <h3 className="text-lg font-semibold text-white">Recommended Next Steps</h3>
+              </div>
+              <div className="space-y-3">
+                {data.nextSteps.map((step, index) => (
+                  <div key={index} className="flex items-start gap-3 p-4 glass-card rounded-xl hover:bg-white/10 transition-all duration-300 group">
+                    <div className="w-6 h-6 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+                      {index + 1}
+                    </div>
+                    <div className="flex-1">
+                      <span className="text-gray-300 group-hover:text-white transition-colors">{step}</span>
+                    </div>
+                    <ArrowRight className="w-4 h-4 text-blue-400 opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:translate-x-1" />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Action Bar */}
+      <div className="mt-8 pt-6 border-t border-white/10 flex items-center justify-between">
+        <div className="flex items-center gap-2 text-sm text-gray-400">
+          <Brain className="w-4 h-4" />
+          <span>Insights powered by advanced AI analysis</span>
         </div>
-
-        {/* Right Column */}
-        <div className="space-y-6">
-          {/* Objections */}
-          <div>
-            <div className="flex items-center gap-2 mb-3">
-              <AlertTriangle className="w-4 h-4 text-yellow-400" />
-              <h3 className="text-lg font-semibold text-white">Potential Objections</h3>
-            </div>
-            <ul className="space-y-2">
-              {data.objections.map((objection, index) => (
-                <li key={index} className="flex items-center gap-2 text-gray-300">
-                  <div className="w-1.5 h-1.5 bg-yellow-400 rounded-full" />
-                  {objection}
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Next Steps */}
-          <div>
-            <div className="flex items-center gap-2 mb-3">
-              <Target className="w-4 h-4 text-purple-400" />
-              <h3 className="text-lg font-semibold text-white">Recommended Next Steps</h3>
-            </div>
-            <ul className="space-y-2">
-              {data.nextSteps.map((step, index) => (
-                <li key={index} className="flex items-center gap-2 text-gray-300">
-                  <div className="w-1.5 h-1.5 bg-purple-400 rounded-full" />
-                  {step}
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Summary */}
-          <div>
-            <h3 className="text-lg font-semibold text-white mb-3">AI Summary</h3>
-            <p className="text-gray-300 bg-white/5 rounded-lg p-4 border border-white/10 leading-relaxed">
-              {data.summary}
-            </p>
-          </div>
-        </div>
+        <button className="btn-primary">
+          Export Insights
+        </button>
       </div>
     </div>
   );
